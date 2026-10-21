@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChessMath.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">chess-qa-database</a> &gt; <a href="index.source.html" class="el_package">ru.ithub.chess</a> &gt; <span class="el_source">ChessMath.java</span></div><h1>ChessMath.java</h1><pre class="source lang-java linenums">package ru.ithub.chess;
+
+<span class="fc" id="L3">public final class ChessMath {</span>
+    public record Position(int x, int y) {
+<span class="fc" id="L5">        public Position {</span>
+<span class="pc bpc" id="L6" title="3 of 8 branches missed.">            if (x &lt; 1 || x &gt; 8 || y &lt; 1 || y &gt; 8) {</span>
+<span class="fc" id="L7">                throw new IllegalArgumentException(&quot;Coordinates must be between 1 and 8&quot;);</span>
+            }
+<span class="fc" id="L9">        }</span>
+    }
+
+<span class="fc" id="L12">    public record AttackResult(boolean rook, boolean bishop, boolean any) {}</span>
+
+    public AttackResult calculate(Position k, Position r, Position b) {
+<span class="pc bpc" id="L15" title="2 of 6 branches missed.">        if (k.equals(r) || k.equals(b) || r.equals(b)) {</span>
+<span class="fc" id="L16">            throw new IllegalArgumentException(&quot;Pieces must occupy different squares&quot;);</span>
+        }
+<span class="pc bpc" id="L18" title="1 of 4 branches missed.">        boolean rookLine = k.x() == r.x() || k.y() == r.y();</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        boolean bishopLine = Math.abs(k.x() - b.x()) == Math.abs(k.y() - b.y());</span>
+<span class="fc" id="L20">        boolean rookBlocked =</span>
+<span class="pc bpc" id="L21" title="1 of 6 branches missed.">            (k.x() == r.x() &amp;&amp; b.x() == k.x() &amp;&amp; (b.y() - k.y()) * (b.y() - r.y()) &lt; 0) ||</span>
+<span class="pc bpc" id="L22" title="5 of 6 branches missed.">            (k.y() == r.y() &amp;&amp; b.y() == k.y() &amp;&amp; (b.x() - k.x()) * (b.x() - r.x()) &lt; 0);</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        boolean bishopBlocked = bishopLine &amp;&amp;</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">            Math.abs(r.x() - b.x()) == Math.abs(r.y() - b.y()) &amp;&amp;</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">            (r.x() - b.x()) * (r.x() - k.x()) &lt; 0 &amp;&amp;</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">            (r.y() - b.y()) * (r.y() - k.y()) &lt; 0;</span>
+<span class="fc bfc" id="L27" title="All 4 branches covered.">        boolean rook = rookLine &amp;&amp; !rookBlocked;</span>
+<span class="fc bfc" id="L28" title="All 4 branches covered.">        boolean bishop = bishopLine &amp;&amp; !bishopBlocked;</span>
+<span class="fc bfc" id="L29" title="All 4 branches covered.">        return new AttackResult(rook, bishop, rook || bishop);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
