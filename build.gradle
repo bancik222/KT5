@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'jacoco'
+}
+group = 'ru.ithub'
+version = '1.0'
+repositories { mavenCentral() }
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.11.4'
+    testImplementation 'org.xerial:sqlite-jdbc:3.46.1.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+application { mainClass = 'ru.ithub.chess.Main' }
+test {
+    useJUnitPlatform()
+    systemProperty 'chess.db', file('database/chess_tests.db').absolutePath
+    testLogging { events 'passed', 'failed', 'skipped' }
+    finalizedBy 'saveTestResults'
+}
+tasks.register('saveTestResults', JavaExec) {
+    group = 'verification'
+    description = 'Import JUnit XML results into SQLite after each test run'
+    dependsOn 'testClasses'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'ru.ithub.chess.TestResultImporter'
+    args file('database/chess_tests.db').absolutePath,
+         file('build/test-results/test').absolutePath
+}
+jacocoTestReport {
+    dependsOn test
+    reports { xml.required = true; html.required = true }
+}
+tasks.named('test') { finalizedBy 'jacocoTestReport' }
